@@ -13,16 +13,15 @@ public class Cuenta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId; // Identificador del usuario de tu sistema
+    private int userId; // Identificador del usuario de tu sistema
 
-    private String mercadoPagoAccessToken;
-    private String mercadoPagoRefreshToken;
-    private String mercadoPagoUserId;
+    private float mercadoPago;
 
     public Cuenta(){}
 
-    public Cuenta(Long userId){
+    public Cuenta(int userId, float mercadoPago){
         this.userId = userId;
+        this.mercadoPago = mercadoPago;
     }
 }
 
