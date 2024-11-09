@@ -32,6 +32,7 @@ public class CuentaService {
 
     public Cuenta save(Cuenta cuenta, jakarta.servlet.http.HttpServletRequest request) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        System.out.print("Auth header "+authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             HttpHeaders headers = createHeaders(token);
