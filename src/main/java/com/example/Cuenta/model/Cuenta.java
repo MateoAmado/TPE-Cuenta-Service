@@ -1,9 +1,7 @@
 package com.example.Cuenta.model;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 @Entity
 @Data
@@ -17,11 +15,14 @@ public class Cuenta {
 
     private float mercadoPago;
 
+    @Value(value = "true")
+    private boolean activa;
     public Cuenta(){}
 
     public Cuenta(int userId, float mercadoPago){
         this.userId = userId;
         this.mercadoPago = mercadoPago;
+        this.activa = true;
     }
 }
 

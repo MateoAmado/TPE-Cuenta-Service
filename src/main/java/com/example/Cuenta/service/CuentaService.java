@@ -2,8 +2,10 @@ package com.example.Cuenta.service;
 
 
 import com.example.Cuenta.DTO.CuentaDTO;
+import com.example.Cuenta.dto.UsuarioDTO;
 import com.example.Cuenta.model.Cuenta;
 import com.example.Cuenta.repository.CuentaRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -37,19 +39,20 @@ public class CuentaService {
             String token = authHeader.substring(7);
             HttpHeaders headers = createHeaders(token);
             HttpEntity<String> entity = new HttpEntity<>(null, headers);
-            ResponseEntity<String> validationResponseC = validateReponse(APIUsuario +"/"+cuenta.getUserId(), entity);
+            ResponseEntity<UsuarioDTO> validationResponseC = validateReponse(APIUsuario +"/"+cuenta.getUserId(), entity);
            if (validationResponseC.getStatusCode() == HttpStatus.OK) {
+                cuenta.setActiva(true);
                 return cuentaRepository.save(cuenta);
             }
         }
         return null;
     }
-    public ResponseEntity<String> validateReponse(String url, HttpEntity<String> entity) {
+    public ResponseEntity<UsuarioDTO> validateReponse(String url, HttpEntity<String> entity) {
         return restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 entity,
-                String.class);
+                UsuarioDTO.class);
 
     }
     public Cuenta delete(Long id) {
@@ -58,6 +61,24 @@ public class CuentaService {
             cuentaRepository.delete(cuenta);
         }
         return cuenta;
+    }
+
+    public Cuenta setEstadoCuenta(Cuenta cuenta, jakarta.servlet.http.HttpServletRequest request, boolean estado){
+
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        System.out.print("Auth header "+authHeader);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            HttpHeaders headers = createHeaders(token);
+            HttpEntity<String> entity = new HttpEntity<>(null, headers);
+            ResponseEntity<UsuarioDTO> validationResponseC = validateReponse(APIUsuario +"/"+cuenta.getUserId(), entity);
+            if (validationResponseC.getStatusCode() == HttpStatus.OK && validationResponseC.getBody().getRol().equals("ADMIN")) {
+                    cuenta.setActiva(estado);
+                    cuentaRepository.save(cuenta);
+                    return cuenta;
+            }
+        }
+        return null;
     }
 
     public Cuenta put(Long id, Cuenta cuenta) {
@@ -82,4 +103,6 @@ public class CuentaService {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         return headers;
     }
+
+
 }

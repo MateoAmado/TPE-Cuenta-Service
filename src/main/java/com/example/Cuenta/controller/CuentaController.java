@@ -7,7 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,6 +54,27 @@ public class CuentaController {
         }
         return ResponseEntity.ok(cuentaDatos);
     }
+
+    @PutMapping("/{id}/deshabilitar")
+    public ResponseEntity<Cuenta> deshabilitarCuenta(@PathVariable Long id, HttpServletRequest request){
+        Cuenta cuenta = cuentaService.obtener(id);
+        if(cuenta != null){
+            cuentaService.setEstadoCuenta(cuenta, request, false);
+            return new ResponseEntity<>(cuenta, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/{id}/habilitar")
+    public ResponseEntity<Cuenta> habilitarCuenta(@PathVariable Long id, HttpServletRequest request){
+        Cuenta cuenta = cuentaService.obtener(id);
+        if(cuenta != null){
+            cuentaService.setEstadoCuenta(cuenta, request, true);
+            return new ResponseEntity<>(cuenta, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 
     @Operation(summary = "Crear una nueva cuenta", description = "Crea una nueva cuenta en el sistema")
     @PostMapping
