@@ -2,10 +2,12 @@ package com.example.Cuenta.service;
 
 
 import com.example.Cuenta.DTO.CuentaDTO;
+import com.example.Cuenta.dto.LogDTO;
 import com.example.Cuenta.dto.UsuarioDTO;
 import com.example.Cuenta.model.Cuenta;
 import com.example.Cuenta.repository.CuentaRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -23,6 +25,9 @@ public class CuentaService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Value("http://localhost:8025/logs")
+    private String APILogs;
 
     @Value("http://localhost:8090/auth")
     private String APIUsuario;
@@ -42,10 +47,23 @@ public class CuentaService {
             ResponseEntity<UsuarioDTO> validationResponseC = validateReponse(APIUsuario +"/"+cuenta.getUserId(), entity);
            if (validationResponseC.getStatusCode() == HttpStatus.OK) {
                 cuenta.setActiva(true);
-                return cuentaRepository.save(cuenta);
+                Cuenta cuentanueva = cuentaRepository.save(cuenta);
+               LogDTO log = new LogDTO("Se registro una nueva cuenta del Usuario " +cuenta.getUserId()+".");
+               postLog(new HttpEntity<>(log, headers));
+               return cuentanueva;
+
             }
         }
         return null;
+    }
+
+    public void postLog(HttpEntity<LogDTO> entity){
+        restTemplate.exchange(
+                this.APILogs,
+                HttpMethod.POST,
+                entity,
+                LogDTO.class
+        );
     }
     public ResponseEntity<UsuarioDTO> validateReponse(String url, HttpEntity<String> entity) {
         return restTemplate.exchange(
