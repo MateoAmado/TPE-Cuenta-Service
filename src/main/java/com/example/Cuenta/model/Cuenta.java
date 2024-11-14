@@ -24,5 +24,7 @@ public class Cuenta {
         this.mercadoPago = mercadoPago;
         this.activa = true;
     }
+
+
 }
 

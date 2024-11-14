@@ -1,7 +1,6 @@
-package com.example.Cuenta.dto;
+package com.example.Cuenta.DTO;
 
 public class UsuarioDTO {
-
 
     private int id;
     private String password;

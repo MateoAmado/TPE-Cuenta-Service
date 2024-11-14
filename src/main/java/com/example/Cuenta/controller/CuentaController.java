@@ -113,7 +113,7 @@ public class CuentaController {
         if(cuentaRespuesta == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(cuentaRespuesta);
+        return new ResponseEntity<>(cuentaRespuesta, HttpStatus.CREATED);
     }
 
     @Operation(summary = "Eliminar una cuenta", description = "Elimina una cuenta específica mediante su ID")
@@ -128,6 +128,6 @@ public class CuentaController {
         if (cuenta == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return (ResponseEntity<Cuenta>) ResponseEntity.notFound();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

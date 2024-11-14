@@ -3,7 +3,7 @@ package com.example.Cuenta.service;
 
 import com.example.Cuenta.DTO.CuentaDTO;
 import com.example.Cuenta.dto.LogDTO;
-import com.example.Cuenta.dto.UsuarioDTO;
+import com.example.Cuenta.DTO.UsuarioDTO;
 import com.example.Cuenta.model.Cuenta;
 import com.example.Cuenta.repository.CuentaRepository;
 import jakarta.servlet.http.HttpServletRequest;
