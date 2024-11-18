@@ -61,10 +61,11 @@ public class CuentaController {
     public ResponseEntity<Cuenta> cambiarDatos(
             @Parameter(description = "ID de la cuenta a actualizar", required = true) @PathVariable Long id,
             @RequestBody Cuenta cuenta) {
-        Cuenta cuentaDatos = cuentaService.put(id, cuenta);
+        Cuenta cuentaDatos = cuentaService.obtener(id);
         if (cuentaDatos == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        cuentaService.put(id, cuenta);
         return ResponseEntity.ok(cuentaDatos);
     }
 

@@ -13,6 +13,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 
 import java.util.List;
 import java.util.Objects;
@@ -22,6 +26,8 @@ public class CuentaService {
 
     @Autowired
     private CuentaRepository cuentaRepository;
+
+    private final String SECRET = "Kb2N1Mg0RM1G9IAGOq6vs2sb4UU4ORFmGgqU+ewV+IPa6mVmKB2lPfGWlQAPi0ByYtYnWIQDiXb0Mz3Uf0HZTg";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -81,34 +87,45 @@ public class CuentaService {
         return cuenta;
     }
 
-    public Cuenta setEstadoCuenta(Cuenta cuenta, jakarta.servlet.http.HttpServletRequest request, boolean estado){
-
+    public Cuenta setEstadoCuenta(Cuenta cuenta, jakarta.servlet.http.HttpServletRequest request, boolean estado) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        System.out.print("Auth header "+authHeader);
+
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            HttpHeaders headers = createHeaders(token);
-            HttpEntity<String> entity = new HttpEntity<>(null, headers);
-            ResponseEntity<UsuarioDTO> validationResponseC = validateReponse(APIUsuario +"/"+cuenta.getUserId(), entity);
-            if (validationResponseC.getStatusCode() == HttpStatus.OK && validationResponseC.getBody().getRol().equals("ADMIN")) {
+
+            try {
+
+                Claims claims = Jwts.parser()
+                        .setSigningKey(SECRET)
+                        .parseClaimsJws(token)
+                        .getBody();
+
+
+                String role = claims.get("role", String.class);
+
+
+                if ("ADMIN".equals(role)) {
                     cuenta.setActiva(estado);
                     cuentaRepository.save(cuenta);
                     return cuenta;
+                }
+            } catch (Exception e) {
+                /
+                e.printStackTrace();
             }
         }
+
         return null;
     }
 
     public Cuenta put(Long id, Cuenta cuenta) {
-        if(id.equals(cuenta.getId())){
+
             Cuenta cuentaEncontrada= cuentaRepository.obtenerPorID(id);
             if(cuentaEncontrada!=null){
                 cuentaEncontrada.setMercadoPago(cuenta.getMercadoPago());
                 cuentaEncontrada.setUserId(cuenta.getUserId());
-                cuentaRepository.save(cuentaEncontrada);
+               return cuentaRepository.save(cuentaEncontrada);
             }
-        return cuentaEncontrada;
-        }
         return null;
        }
 
