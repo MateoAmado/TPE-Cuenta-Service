@@ -57,7 +57,6 @@ public class CuentaService {
                LogDTO log = new LogDTO("Se registro una nueva cuenta del Usuario " +cuenta.getUserId()+".");
                postLog(new HttpEntity<>(log, headers));
                return cuentanueva;
-
             }
         }
         return null;
@@ -89,18 +88,13 @@ public class CuentaService {
 
     public Cuenta setEstadoCuenta(Cuenta cuenta, jakarta.servlet.http.HttpServletRequest request, boolean estado) {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-
             try {
-
                 Claims claims = Jwts.parser()
                         .setSigningKey(SECRET)
                         .parseClaimsJws(token)
                         .getBody();
-
-
                 String role = claims.get("role", String.class);
 
 
@@ -110,7 +104,6 @@ public class CuentaService {
                     return cuenta;
                 }
             } catch (Exception e) {
-                /
                 e.printStackTrace();
             }
         }
@@ -119,7 +112,6 @@ public class CuentaService {
     }
 
     public Cuenta put(Long id, Cuenta cuenta) {
-
             Cuenta cuentaEncontrada= cuentaRepository.obtenerPorID(id);
             if(cuentaEncontrada!=null){
                 cuentaEncontrada.setMercadoPago(cuenta.getMercadoPago());

@@ -78,8 +78,10 @@ public class CuentaController {
     public ResponseEntity<Cuenta> deshabilitarCuenta(@PathVariable Long id, HttpServletRequest request){
         Cuenta cuenta = cuentaService.obtener(id);
         if(cuenta != null){
-            cuentaService.setEstadoCuenta(cuenta, request, false);
-            return new ResponseEntity<>(cuenta, HttpStatus.OK);
+            Cuenta c=cuentaService.setEstadoCuenta(cuenta, request, false);
+            if(c!=null){
+                return new ResponseEntity<>(cuenta, HttpStatus.OK);
+            }
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
@@ -90,15 +92,16 @@ public class CuentaController {
             @ApiResponse(responseCode = "404", description = "No se encontró ninguna cuenta"),
     })
     @PutMapping("/{id}/habilitar")
-    public ResponseEntity<Cuenta> habilitarCuenta(@PathVariable Long id, HttpServletRequest request){
+    public ResponseEntity<Cuenta> habilitarCuenta(@PathVariable Long id, HttpServletRequest request) {
         Cuenta cuenta = cuentaService.obtener(id);
-        if(cuenta != null){
-            cuentaService.setEstadoCuenta(cuenta, request, true);
-            return new ResponseEntity<>(cuenta, HttpStatus.OK);
+        if (cuenta != null) {
+            Cuenta c = cuentaService.setEstadoCuenta(cuenta, request, true);
+            if (c != null) {
+                return new ResponseEntity<>(cuenta, HttpStatus.OK);
+            }
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
     @Operation(summary = "Crear una nueva cuenta", description = "Crea una nueva cuenta en el sistema")
     @ApiResponses(value = {
